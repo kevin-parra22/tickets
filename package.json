@@ -1,0 +1,21 @@
+{
+  "name": "front_ticket",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2",
+    "git": "^0.1.5",
+    "github": "^14.0.0",
+    "mysql2": "^3.9.3",
+    "nodemon": "^3.1.0",
+    "tedious": "^18.1.0"
+  }
+}
