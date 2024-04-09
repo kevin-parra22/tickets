@@ -33,7 +33,7 @@ connection.on('connect', (err) => {
 });
 
 function executeStatement(){
-    const request = new Request("SELECT 24/2", (err, rowCount) => {
+    const request = new Request("SELECT * from dbo.ticket_TicketGeneral", (err, rowCount) => {
         if(err){
             console.error("Error executing statement: " + err.message);
             throw err;
@@ -42,10 +42,14 @@ function executeStatement(){
     });
 
     request.on('row', (columns) => {
-        console.log(columns);
-    })
-    connection.execSql(request);
 
+        columns.forEach(column => {
+            console.log("%s: %s", column.metadata.colName, column.value);
+        });
+        //console.log(columns);
+    });
+
+    connection.execSql(request);
 }
 
 /*const mysql = require('mysql2/promise');
