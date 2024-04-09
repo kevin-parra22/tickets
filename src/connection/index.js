@@ -2,17 +2,19 @@ const Connection = require('tedious').Connection;
 const Request = require('tedious').Request;
 
 var config = {
-    server: 'IDE07282\SQLEXPRESS02',
+    server: 'IDE07282\\SQLEXPRESS02',
     authentication: {
         type: 'default',
         options: {
-            username: "kparra",
+            userName: "kparra",
             password: "kparra"
         }
     },
     options: {
-        port: 1433,
+        port: 1433 ,
         database: 'Support_Tickets',
+        encrypt: true,
+        trustServerCertificate: true
     }
 }
 
@@ -22,19 +24,23 @@ connection.connect();
 
 connection.on('connect', (err) => {
     if(err){
-        console.log("Something went wrong");
-        throw err; 
+        console.error("Error: " + err.message); 
+    } else {
+        console.log("Connected successfully");
+        executeStatement();
     }
-    executeStatement();
+    
 });
 
 function executeStatement(){
-    const request = new Request("SELECT 24/2", (err, rowCont) => {
+    const request = new Request("SELECT 24/2", (err, rowCount) => {
         if(err){
+            console.error("Error executing statement: " + err.message);
             throw err;
         }
         connection.close();
     });
+
     request.on('row', (columns) => {
         console.log(columns);
     })
