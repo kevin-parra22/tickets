@@ -2,7 +2,7 @@
   "name": "front_ticket",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/app.js"
@@ -11,11 +11,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.20.2",
+    "ejs": "^3.1.9",
     "express": "^4.19.2",
     "git": "^0.1.5",
     "github": "^14.0.0",
+    "mssql": "^10.0.2",
     "mysql2": "^3.9.3",
     "nodemon": "^3.1.0",
+    "socket.io": "^4.7.5",
     "tedious": "^18.1.0"
   }
 }

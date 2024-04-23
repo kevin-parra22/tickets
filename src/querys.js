@@ -1,8 +1,25 @@
-const connection = require('./connection');
+/*function executeStatement(){
+    const request = new Request("SELECT * from dbo.ticket_TicketGeneral", (err, rowCount) => {
+        if(err){
+            console.error("Error executing statement: " + err.message);
+            throw err;
+        }
+        connection.close();
+    });
 
-const getAllactors = async () => {
-    const [query] = await connection.execute('SELECT * FROM sakila.actor');
-    return query;
-};
+    const results = [];
 
-module.exports = { getAllactors }
+    request.on('row', (columns) => {
+        const row = [];
+        columns.forEach(column => {
+            row[column.metadata.colName] = column.value;
+        });
+        results.push(row);
+    });
+
+    request.on('requestCompleted', () => {
+        io.emit('data', results);
+    });
+
+    connection.execSql(request);
+}*/
