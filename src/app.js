@@ -1,119 +1,8 @@
-/*const express = require('express');
-const app = express();
-const http = require('http').Server(app);
-
-const Connection = require('tedious').Connection;
-const Request = require('tedious').Request;
-const tedious = require('tedious');
-//const connect = require('./connection/connection');
-const TYPES = require('tedious').TYPES;
-
-app.use(express.json());
-
-var config = {
-    server: 'IDE07282\\SQLEXPRESS02',
-    authentication: {
-        type: 'default',
-        options: {
-            userName: "kparra",
-            password: "kparra"
-        }
-    },
-    options: {
-        port: 1433 ,
-        database: 'Support_Tickets',
-        encrypt: true,
-        trustServerCertificate: true
-    }
-}
-
-const connection = new Connection(config);
-
-connection.connect();
-
-connection.on('connect', (err) => {
-    if(err){
-        console.error("Error: " + err.message); 
-    } else {
-        console.log("Connected successfully to the database");
-        executeStatement();
-    }
-    
-});
-
-function executeStatement() {  
-    var request = new Request("SELECT * from dbo.ticket_Difficult", function(err) {  
-    if (err) {  
-        console.log(err);}  
-    });  
-    var result = "";  
-    request.on('row', function(columns) {  
-        columns.forEach(function(column) {  
-          if (column.value === null) {  
-            console.log(column.value);  
-          } else {  
-            result+= column.value + " ";  
-          }  
-        });  
-        console.log(result);  
-        result ="";  
-    });  
-
-    request.on('done', function(rowCount, more) {  
-    console.log(rowCount + ' rows returned');  
-    });  
-    
-    // Close the connection after the final event emitted by the request, after the callback passes
-    request.on("requestCompleted", function (rowCount, more) {
-        connection.close();
-    });
-    connection.execSql(request);  
-}
-
-function executeStatement1() {  
-    var request = new Request("INSERT INTO dbo.ticket_Difficult (id_level, difficult_name, description) VALUES (@id_level, @difficult_name, @description);", function(err) {  
-     if (err) {  
-        console.log(err);}  
-    });  
-    request.addParameter('id_level', TYPES.NVarChar, 'E0FFF747-EF24-48E9-BB92-E9E0B51361FA');  
-    request.addParameter('difficult_name', TYPES.NVarChar , 'Kevin Chiquito');
-    request.addParameter('description', TYPES.NVarChar, 'Un Kevin mas abajo del Kevin normal');  
-    request.on('row', function(columns) {  
-        columns.forEach(function(column) {  
-          if (column.value === null) {  
-            console.log('NULL');  
-          } else {  
-            console.log("Product id of inserted item is " + column.value);  
-          }  
-        });  
-    });
-
-    // Close the connection after the final event emitted by the request, after the callback passes
-    request.on("requestCompleted", function (rowCount, more) {
-        connection.close();
-    });
-    connection.execSql(request);  
-}
-
-app.use(express.static('public'));
-
-app.set('view engine', 'ejs');
-
-app.set('views', __dirname + '/views')
-
-app.get('/', (req, res) => {
-    res.render('index')
-})
-
-const PORT = 3000;
-
-http.listen(PORT, () => {
-    console.log(`Application being listened on localhost:${PORT}`)
-});*/
-
 const express = require('express');
 const app = express();
 const sql = require('mssql');
+const bodyParser = require('body-parser');
+//const pool = require('pg');
 
 // Configure SQL connection
 const config = {
@@ -135,22 +24,83 @@ const config = {
         trustServerCertificate: true
     }
 };
+app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+//Define the routes where the data appears
+
+app.get('/data', async (req,res) =>{
+    res.render('index')
+});
+app.get('/insertData', async (req,res) => {
+    res.render('insert')
+});
+app.get('/login', async (req,res) =>{
+    res.render('login')
+})
+
 
 // Define API endpoint to fetch data
-app.get('/data', async (req, res) => {
+app.get('/', async (req, res) => {
   try {
     // Connect to SQL Server
     await sql.connect(config);
     // Execute SQL query
-    const result = await sql.query`SELECT * FROM dbo.ticket_TicketGeneral`;
+    const result = await sql.query`SELECT * FROM dbo.ticket_prueba`;
     // Send response with data
+    //const result = await sql.query`EXEC spGetTicketInfotoEdit @id_ticket ='26385887-CF15-40D9-AF54-F1C6BFF254A0';`
     res.json(result.recordset);
+    console.log(result.recordset);
     console.log("Connected to the database")
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal server error' });
   }
+
 });
+
+app.post('/insertData', async (req, res) => {
+    try {
+        const { ticket_name, description, sub_category  } = req.body; // Replace with your actual column names
+
+        //if(!id_level || !difficult_name || !description) {
+            //return res.status(400).json({ error: 'All fields are required' });
+        //}
+        console.log('Received Ticket Name:', ticket_name);
+        // Connect to SQL Server
+        await sql.connect(config);
+        // Execute SQL query
+        await sql.query`INSERT INTO dbo.ticket_prueba (ticket_name, description, sub_category) VALUES (${ticket_name}, ${description}, ${sub_category})`;
+        // Send response
+        res.json({ success: true, message: 'Data inserted successfully' });
+        console.log("Inserted data into the database");
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal server error' }); 
+    }
+});
+
+/*app.get('/', async (req, res) => {
+    try {
+        await pool.connect();
+        const result = await pool.request().execute('dbo.spGetTicketMain');
+        const proc = {
+            id_ticket: result.recordset,
+        };
+
+        res.json(proc);
+    } catch (error) {
+        res.status(500).json(error);
+        console.error(error)
+        
+    }
+});*/
+
+app.use(express.static('public'));
+
+app.set('view engine', 'ejs');
+
+app.set('views', __dirname + '/views')
 
 // Start the server
 const port = 3000;
