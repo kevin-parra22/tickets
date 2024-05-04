@@ -15,8 +15,6 @@ const config = {
         options: {
             userName: process.env.USER1, 
             password: process.env.PASS1, 
-            //userName: "sqlconnection01",
-            //password: "Delicias01"
         }
     },
     options: {
@@ -35,8 +33,6 @@ const config2 = {
         options: {
             userName: process.env.USER1,
             password: process.env.PASS1,
-            //userName: "sqlconnection01",
-            //password: "Delicias01"
         }
     },
     options: {
