@@ -5,18 +5,16 @@ const bodyParser = require('body-parser');
 const { TYPES } = require('tedious');
 const { v4: uuidv4 } = require('uuid');
 const moment = require('moment');
+const dotenv = require('dotenv').config();
 
-
-// Configure SQL connection
+// Configure SQL connection 
 const config = {
-    //server: 'IDE07282\\SQLEXPRESS02',
-    //server:'192.168.2.124',
-    server:'IDE00023\\SQLEXPRESS',
+    server: process.env.SERVER1,
     authentication: {
         type: 'default',
         options: {
-            userName: "kevin.parra",
-            password: "kevin.parra",
+            userName: process.env.USER1, 
+            password: process.env.PASS1, 
             //userName: "sqlconnection01",
             //password: "Delicias01"
         }
@@ -31,14 +29,12 @@ const config = {
 };
 
 const config2 = {
-    //server: 'IDE07282\\SQLEXPRESS02',
-    server:'IDE00023\\SQLEXPRESS',
-    //server:'192.168.2.124',
+    server: process.env.SERVER1,
     authentication: {
         type: 'default',
         options: {
-            userName: "kevin.parra",
-            password: "kevin.parra",
+            userName: process.env.USER1,
+            password: process.env.PASS1,
             //userName: "sqlconnection01",
             //password: "Delicias01"
         }
