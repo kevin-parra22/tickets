@@ -2,17 +2,21 @@ const express = require('express');
 const app = express();
 const sql = require('mssql');
 const bodyParser = require('body-parser');
-//const pool = require('pg');
+const { TYPES } = require('tedious');
+const { v4: uuidv4 } = require('uuid');
+const moment = require('moment');
+
 
 // Configure SQL connection
 const config = {
-    server: 'IDE07282\\SQLEXPRESS02',
+    //server: 'IDE07282\\SQLEXPRESS02',
     //server:'192.168.2.124',
+    server:'IDE00023\\SQLEXPRESS',
     authentication: {
         type: 'default',
         options: {
-            userName: "kparra",
-            password: "kparra",
+            userName: "kevin.parra",
+            password: "kevin.parra",
             //userName: "sqlconnection01",
             //password: "Delicias01"
         }
@@ -21,7 +25,29 @@ const config = {
         port: 1433 ,
         database: 'Support_Tickets',
         encrypt: true,
-        trustServerCertificate: true
+        trustServerCertificate: true,
+
+    }
+};
+
+const config2 = {
+    //server: 'IDE07282\\SQLEXPRESS02',
+    server:'IDE00023\\SQLEXPRESS',
+    //server:'192.168.2.124',
+    authentication: {
+        type: 'default',
+        options: {
+            userName: "kevin.parra",
+            password: "kevin.parra",
+            //userName: "sqlconnection01",
+            //password: "Delicias01"
+        }
+    },
+    options: {
+        port: 1433 ,
+        database: 'Apps_General',
+        encrypt: true,
+        trustServerCertificate: true,
     }
 };
 app.use(express.json());
@@ -39,16 +65,32 @@ app.get('/login', async (req,res) =>{
     res.render('login')
 })
 
+async function connectTo(){
+    try {
 
+        await sql.connect(config);
+        console.log("Success")
+
+        await sql.connect(config2);
+        console.log("Success");
+        
+    } catch (error) {
+        console.error("Failed:", error);
+    }
+}
+
+connectTo();
 // Define API endpoint to fetch data
 app.get('/', async (req, res) => {
   try {
     // Connect to SQL Server
     await sql.connect(config);
     // Execute SQL query
-    const result = await sql.query`SELECT * FROM dbo.ticket_prueba`;
+    //const result = await sql.query`SELECT * FROM dbo.ticket_prueba`;
+    const id_ticket = '26385887-CF15-40D9-AF54-F1C6BFF254A0';
+    //const id_ticket = sql.UniqueIdentifier;
     // Send response with data
-    //const result = await sql.query`EXEC spGetTicketInfotoEdit @id_ticket ='26385887-CF15-40D9-AF54-F1C6BFF254A0';`
+    const result = await sql.query`EXEC spGetTicketInfotoEdit @id_ticket = ${id_ticket};`
     res.json(result.recordset);
     console.log(result.recordset);
     console.log("Connected to the database")
@@ -59,7 +101,7 @@ app.get('/', async (req, res) => {
 
 });
 
-app.post('/insertData', async (req, res) => {
+/*app.post('/insertData', async (req, res) => {
     try {
         const { ticket_name, description, sub_category  } = req.body; // Replace with your actual column names
 
@@ -78,23 +120,35 @@ app.post('/insertData', async (req, res) => {
         console.error(err);
         res.status(500).json({ error: 'Internal server error' }); 
     }
-});
-
-/*app.get('/', async (req, res) => {
-    try {
-        await pool.connect();
-        const result = await pool.request().execute('dbo.spGetTicketMain');
-        const proc = {
-            id_ticket: result.recordset,
-        };
-
-        res.json(proc);
-    } catch (error) {
-        res.status(500).json(error);
-        console.error(error)
-        
-    }
 });*/
+
+app.post('/insertData', async (req, res) => {
+    try {
+      // Connect to SQL Server
+      await sql.connect(config);
+
+      // Declare variables required by the stored procedure
+      
+      const id_ticket = uuidv4();;
+      const comment = req.body.comment;
+      const comment_concat = req.body.comment_concat;
+      const id_creator = uuidv4();;
+      const date = moment().format('YYYY-MM-DD HH:mm:ss.SSS');;
+      const HowSaveChat = req.body.HowSaveChat;
+      const id_task = uuidv4();;
+      
+      
+      // Execute stored procedure with variables
+      const result = await sql.query`EXEC spSaveChat @id_ticket = ${id_ticket}, @comment = ${comment}, @comment_concat = ${comment_concat}, @id_creator = ${id_creator} , @date = ${date}, @HowSaveChat = ${HowSaveChat}, @id_task = ${id_task};`;
+      
+      // Send response with success message or result
+      res.json({ message: 'Data inserted successfully' });
+      console.log("Data inserted successfully");
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
 
 app.use(express.static('public'));
 

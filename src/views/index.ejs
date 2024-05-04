@@ -6,6 +6,9 @@
   <title>Ticket data</title>
 </head>
 <body>
+    <h3>Bienvenido! "Nombre"</h3>
+    <label for="Welcome">Estos son los tickets que están a tu nombre: </label>
+    
     <div id="ticketData"></div>
   <script>
     // Fetch data from backend
@@ -15,7 +18,11 @@
         const ticketDataElement = document.getElementById('ticketData');
         // Display data
         data.forEach(ticket => {
-          ticketDataElement.innerHTML += `<p>Ticket name: ${ticket.ticket_name} <br>, Description: ${ticket.description} <br>, Category: ${ticket.sub_category}</p>`;
+          ticketDataElement.innerHTML += `<p>ID ticket: ${ticket.id_ticket} <br>, Folio: ${ticket.folio_ticket} <br>, Creador: ${ticket.creator} <br>,
+            Usuario: ${ticket.user} <br>, Site ${ticket.site} <br>, Nombre compañia: ${ticket.company_name} <br>, Estatus: ${ticket.status_name} <br>,
+            Division: ${ticket.division_name} <br>, Categoria: ${ticket.category_name} <br>, Sub Categoria: ${ticket.subcategory_name} <br>,
+            Prioridad: ${ticket.priority_name} <br>, Descripcion: ${ticket.description} <br>, Tecnico: ${ticket.technician} <br>, Fecha: ${ticket.date_creation} <br>,
+            Tipo: ${ticket.typesupport_name}</p>`;
         });
       })
       .catch(error => console.error('Error fetching data:', error));

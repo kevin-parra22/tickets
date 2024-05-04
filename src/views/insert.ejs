@@ -7,13 +7,32 @@
 </head>
 <body>
 
-    <form id="insertForm">
+    <!--<form id="insertForm">
       <label for="ticket_name">ticket_name:</label>
       <input type="text" id="ticket_name" name="ticket_name" placeholder="ticket_name"><br><br>
       <label for="description">description:</label>
       <input type="text" id="description" name="description" placeholder="description"><br><br>
       <label for="sub_category">sub_category:</label>
       <input type="text" id="sub_category" name="sub_category" placeholder="sub_category"><br><br>
+      <button type="submit">Insert Data</button>
+    </form>
+    <div id="insertMessage"></div>-->
+
+    <form id="insertForm">
+      <label for="id_ticket">id_ticket:</label>
+      <input type="text" id="id_ticket" name="id_ticket" placeholder="id_ticket"><br><br>
+      <label for="comment">comment:</label>
+      <input type="text" id="comment" name="comment" placeholder="comment"><br><br>
+      <label for="comment_concat">comment_concat:</label>
+      <input type="text" id="comment_concat" name="comment_concat" placeholder="comment_concat"><br><br>
+      <label for="id_creator">id_creator:</label>
+      <input type="text" id="id_creator" name="id_creator" placeholder="id_creator"><br><br>
+      <label for="date">date:</label>
+      <input type="date" id="date" name="date" placeholder="date"><br><br>
+      <label for="HowSaveChat">HowSaveChat:</label>
+      <input type="text" id="HowSaveChat" name="HowSaveChat" placeholder="HowSaveChat"><br><br>
+      <label for="id_task">id_task:</label>
+      <input type="text" id="id_task" name="id_task" placeholder="id_task"><br><br>
       <button type="submit">Insert Data</button>
     </form>
     <div id="insertMessage"></div>
@@ -23,7 +42,6 @@
       event.preventDefault();
       const formData = new  URLSearchParams(new FormData(document.getElementById('insertForm')));
 
-      console.log('Ticket Name:', formData.get('ticket_name'));
       fetch('http://localhost:3000/insertData', {
         method: 'POST',
         headers: {
@@ -40,7 +58,8 @@
 
           this.reset();
         } else {
-          insertMessageElement.textContent = data.error || 'Error inserting data';
+          insertMessageElement.textContent = data.error;
+          console.log(data.error);
         }
       })
       .catch(error => console.error('Error inserting data:', error));
